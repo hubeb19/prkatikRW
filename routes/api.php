@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\MahasiswaContrller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,3 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/product',[ProductController::class,'index']);
+Route::post('/insertData',[MahasiswaContrller::class, 'create']);
+Route::get('/getData',[MahasiswaContrller::class, 'getData']);
