@@ -13,17 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mahasiswa', function (Blueprint $table) {
-            $table->id();
-            $table->string('nim')->primary();
+        Schema::create('makul', function (Blueprint $table){
+            $table->string('id')->primary();
             $table->string('nama');
-            $table->string('alamat');
-            $table->string('jurusan');
-            $table->string('kelas');
-            $table->string('kota');
-            $table->integer('Umur');
-            $table->timestamps();
-            });
+            $table->integer('sks');
+            $table->string('dosen');
+        });
     }
 
     /**
@@ -33,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::drop('mahasiswa');
+        Schema::dropIfExists('makul');
     }
 };

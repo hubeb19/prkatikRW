@@ -1,12 +1,32 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 
 class MahasiswaContrller extends Controller
 {
+    public function login(Request $request)
+        {
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
+
+        $token = $request->user()->createToken('token-name');
+
+        return response()->json([
+
+        'access_token' => $token->plainTextToken,
+
+        ]);
+        }
+        return response()->json([
+
+        'message' => 'Invalid login credentials',
+
+        ], 401);
+
+        }
     public function index(){
    
     $products = [
@@ -60,7 +80,7 @@ class MahasiswaContrller extends Controller
         $model = new Mahasiswa();
         $model -> nim=$req->nim;
         $model -> nama=$req->nama;
-        $model -> Umur=$req->Umur;
+        $model -> Umur=$req->umur;
         $model -> alamat=$req->alamat;
         $model -> kota=$req->kota;
         $model -> kelas=$req->kelas;
@@ -80,8 +100,64 @@ class MahasiswaContrller extends Controller
         ];
         return $response;
     }
-    
 
+    function show($nim){
+        $mahasiswa = Mahasiswa::find($nim);
+        if (!$mahasiswa) {
+            return response()->json(['message' => 'Mahasiswa not found'], 404);
+        }
+        return response()->json(['mahasiswa' => $mahasiswa]);
+    }
+    function store(Request $request){
+        $request->validate([
+            
+            'nim' => 'required|unique:mahasiswa',
+            'nama' => 'required',
+            'umur' => 'required|integer',
+            'alamat' => 'required',
+            'kota' => 'required',
+            'kelas' => 'required',
+            'jurusan' => 'required',
+        ]);
+
+        $mahasiswa = Mahasiswa::create($request->all());
+
+        return response()->json(['message' => 'Mahasiswa created successfully', 'mahasiswa' => $mahasiswa]);
+    }
+
+    function update(Request $request ,$nim){
+        $mahasiswa = Mahasiswa::find($nim);
+        if (!$mahasiswa) {
+            return response()->json(['message' => 'Mahasiswa not found'], 404);
+        }
+
+        $request->validate([
+            'nama' => 'required',
+            'umur' => 'required|integer',
+            'alamat' => 'required',
+            'kota' => 'required',
+            'kelas' => 'required',
+            'jurusan' => 'required',
+        ]);
+
+        $mahasiswa->update($request->all());
+
+        return response()->json(['message' => 'Mahasiswa updated successfully', 'mahasiswa' => $mahasiswa]);
+    }
+
+    function destroy($nim){
+        $mahasiswa = Mahasiswa::find($nim);
+        if (!$mahasiswa) {
+            return response()->json(['message' => 'Mahasiswa not found'], 404);
+        }
+
+        $mahasiswa->delete();
+
+        return response()->json(['message' => 'Mahasiswa deleted successfully']);
+    }
+    
+    //delete
+    //update
 
 
 }
